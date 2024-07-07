@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:habittrackertute/pages/home_page.dart';
+import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'pages/user_form_page.dart';
+import 'models/user.dart';
 
 void main() async {
-  // initialize hive
+  WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-
-  // open a box
-  await Hive.openBox("Habit_Database");
-
-  runApp(const MyApp());
+  Hive.registerAdapter(UserDataAdapter());
+  await Hive.openBox<UserData>('userDataBox');
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: HomePage(),
-      theme: ThemeData(primarySwatch: Colors.green),
+      title: 'Flutter Hive Example',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: UserDataForm(),
     );
   }
 }
