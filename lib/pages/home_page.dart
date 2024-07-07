@@ -22,7 +22,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     // if there is no current habit list, then it is the 1st time ever opening the app
     // then create default data
-    if (_myBox.get("CURRENT_HABIT_LIST") != null) {
+    if (_myBox.get("CURRENT_HABIT_LIST") == null) {
       db.createDefaultData();
     }
 
