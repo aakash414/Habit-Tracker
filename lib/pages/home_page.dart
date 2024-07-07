@@ -36,6 +36,7 @@ class _HomePageState extends State<HomePage> {
 
   // checkbox was tapped
   void checkBoxTapped(bool? value, int index) {
+    print("clicked");
     setState(() {
       db.todaysHabitList[index][1] = value;
     });

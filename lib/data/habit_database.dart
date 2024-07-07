@@ -1,12 +1,16 @@
 import 'package:habittrackertute/datetime/date_time.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive/hive.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'dart:convert';
+import '../models/user.dart';
 
 const apiKey = "AIzaSyCGd4B8sVsrRVEpQa6UnK5TYqsbZhg13Gw";
 
 // reference our box
 final _myBox = Hive.box("Habit_Database");
+
+final _userDataBox = Hive.box<UserData>("userDataBox");
 
 class HabitDatabase {
   dynamic allHabitsList = [];
@@ -20,6 +24,7 @@ class HabitDatabase {
       model: 'gemini-1.5-flash-latest',
       apiKey: apiKey,
     );
+
     const prompt =
         'I know you are not a diet planning API, but please generate a JSON response for my requirements. Here are some details of the user: Current weight: 71kg Height: 171cm goal weight: 80kg age: 21 Daily budget: 500 INR Naitonality: Indian Generate a diet plan consisting of breakfast, lunch and dinner for 7 days. Generate a response in this format: [ [ { "day": 1, "type": "breakfast", "food": "Idli vada sambar" }, { "day": 2, "type": "lunch", "food": "Rice sambaar" }, { "day": 2, "type": "dinner", "food": "chapaati daal" } ], // day 2 array consisting of breakfast, lunch and dinner [ .... ]. Dont give me any additional information, just the json response with a ```json in the start and ``` in the end';
     final content = [Content.text(prompt)];
@@ -72,6 +77,7 @@ class HabitDatabase {
 
   // load data if it already exists
   void loadData() {
+    // getUserData();
     // if it's a new day, get habit list from database
     if (_myBox.get(todaysDateFormatted()) == null) {
       todaysHabitList = _myBox.get("CURRENT_HABIT_LIST");
@@ -88,12 +94,23 @@ class HabitDatabase {
     updateDatabase();
   }
 
+  Future<UserData?> getUserData() async {
+    if (Hive.box('userDataBox').isOpen == false) {
+      await Hive.openBox('userDataBox');
+    }
+    // Try to get the user data from the box
+    print(_userDataBox.get('user'));
+
+    return _userDataBox.get('user');
+  }
+
   void nextDay() {
     // if it's the last day of the week, go back to the first day
-    if (day == 6) {
+    if (day >= 6) {
       day = 0;
     } else {
       day++;
+      print(day);
     }
 
     todaysHabitList = [
