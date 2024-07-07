@@ -21,8 +21,11 @@ class UserData {
   @HiveField(5)
   final double dailyFoodBudget;
 
+  @HiveField(5)
+  final double goalWeight;
+
   UserData(this.name, this.age, this.nationality, this.weight, this.height,
-      this.dailyFoodBudget);
+      this.dailyFoodBudget, this.goalWeight);
 }
 
 class UserDataAdapter extends TypeAdapter<UserData> {
@@ -32,13 +35,13 @@ class UserDataAdapter extends TypeAdapter<UserData> {
   @override
   UserData read(BinaryReader reader) {
     return UserData(
-      reader.readString(),
-      reader.readInt(),
-      reader.readString(),
-      reader.readDouble(),
-      reader.readDouble(),
-      reader.readDouble(),
-    );
+        reader.readString(),
+        reader.readInt(),
+        reader.readString(),
+        reader.readDouble(),
+        reader.readDouble(),
+        reader.readDouble(),
+        reader.readDouble());
   }
 
   @override
@@ -49,5 +52,6 @@ class UserDataAdapter extends TypeAdapter<UserData> {
     writer.writeDouble(obj.weight);
     writer.writeDouble(obj.height);
     writer.writeDouble(obj.dailyFoodBudget);
+    writer.writeDouble(obj.goalWeight);
   }
 }

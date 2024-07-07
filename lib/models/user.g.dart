@@ -17,13 +17,13 @@ class UserDataAdapterGenerated extends TypeAdapter<UserData> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return UserData(
-      fields[0] as String,
-      fields[1] as int,
-      fields[2] as String,
-      fields[3] as double,
-      fields[4] as double,
-      fields[5] as double,
-    );
+        fields[0] as String,
+        fields[1] as int,
+        fields[2] as String,
+        fields[3] as double,
+        fields[4] as double,
+        fields[5] as double,
+        fields[6] as double);
   }
 
   @override
@@ -41,7 +41,9 @@ class UserDataAdapterGenerated extends TypeAdapter<UserData> {
       ..writeByte(4)
       ..write(obj.height)
       ..writeByte(5)
-      ..write(obj.dailyFoodBudget);
+      ..write(obj.dailyFoodBudget)
+      ..writeByte(3)
+      ..write(obj.goalWeight);
   }
 
   @override

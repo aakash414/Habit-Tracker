@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import '../models/user.dart';
+import './home_page.dart';
 
 class UserDataForm extends StatefulWidget {
   const UserDataForm({super.key});
@@ -16,6 +17,7 @@ class _UserDataFormState extends State<UserDataForm> {
   final _weightController = TextEditingController();
   final _heightController = TextEditingController();
   final _dailyFoodBudgetController = TextEditingController();
+  final _goalWeightController = TextEditingController();
 
   @override
   void dispose() {
@@ -68,8 +70,13 @@ class _UserDataFormState extends State<UserDataForm> {
                     const InputDecoration(labelText: 'Daily Food Budget'),
                 keyboardType: TextInputType.number,
               ),
+              TextField(
+                controller: _goalWeightController,
+                decoration: const InputDecoration(labelText: 'Goal Weight'),
+                keyboardType: TextInputType.number,
+              ),
               ElevatedButton(
-                onPressed: saveUserData,
+                onPressed: () => saveUserData(context),
                 child: const Text('Save Data'),
               ),
             ],
@@ -79,22 +86,30 @@ class _UserDataFormState extends State<UserDataForm> {
     );
   }
 
-  Future<void> saveUserData() async {
+  Future<void> saveUserData(BuildContext context) async {
     final userData = UserData(
-      _nameController.text,
-      int.parse(_ageController.text),
-      _nationalityController.text,
-      double.parse(_weightController.text),
-      double.parse(_heightController.text),
-      double.parse(_dailyFoodBudgetController.text),
-    );
+        _nameController.text,
+        int.parse(_ageController.text),
+        _nationalityController.text,
+        double.parse(_weightController.text),
+        double.parse(_heightController.text),
+        double.parse(_dailyFoodBudgetController.text),
+        double.parse(_goalWeightController.text));
 
     final box = Hive.box<UserData>('userDataBox');
     await box.put('user', userData);
 
     // Show success message or navigate to another page
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('User data saved successfully')),
-    );
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User data saved successfully')),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const HomePage(), // Use captured context
+        ),
+      );
+    }
   }
 }

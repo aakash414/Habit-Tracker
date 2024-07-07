@@ -15,13 +15,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   HabitDatabase db = HabitDatabase();
+
   final _myBox = Hive.box("Habit_Database");
 
   @override
   void initState() {
     // if there is no current habit list, then it is the 1st time ever opening the app
     // then create default data
-    if (_myBox.get("CURRENT_HABIT_LIST") == null) {
+    if (_myBox.get("CURRENT_HABIT_LIST") != null) {
       db.createDefaultData();
     }
 
@@ -29,9 +30,6 @@ class _HomePageState extends State<HomePage> {
     else {
       db.loadData();
     }
-
-    // update the database
-    db.updateDatabase();
 
     super.initState();
   }
