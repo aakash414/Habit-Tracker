@@ -88,13 +88,23 @@ class HabitDatabase {
     updateDatabase();
   }
 
-  // update database
-  void updateDatabase() {
+  void nextDay() {
+    // if it's the last day of the week, go back to the first day
+    if (day == 6) {
+      day = 0;
+    } else {
+      day++;
+    }
+
     todaysHabitList = [
       [allHabitsList[day][0]['food'], allHabitsList[day][0]['done']],
       [allHabitsList[day][1]['food'], allHabitsList[day][1]['done']],
       [allHabitsList[day][2]['food'], allHabitsList[day][2]['done']],
     ];
+  }
+
+  // update database
+  void updateDatabase() {
     // update todays entry
     _myBox.put(todaysDateFormatted(), todaysHabitList);
 

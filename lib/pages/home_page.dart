@@ -39,6 +39,11 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       db.todaysHabitList[index][1] = value;
     });
+    if (db.todaysHabitList[0][1] == true &&
+        db.todaysHabitList[1][1] == true &&
+        db.todaysHabitList[2][1] == true) {
+      db.nextDay();
+    }
     db.updateDatabase();
   }
 
