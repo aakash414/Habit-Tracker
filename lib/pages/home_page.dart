@@ -18,7 +18,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   HabitDatabase db = HabitDatabase();
   final _myBox = Hive.box("Habit_Database");
-  final _newHabitNameController = TextEditingController();
+  final TextEditingController _newHabitNameController = TextEditingController();
+  final TextEditingController _newHabitCaloriesController =
+      TextEditingController();
   final PageController _pageController = PageController();
 
   final List<String> mealLabels = ['Morning', 'Afternoon', 'Evening'];
@@ -44,9 +46,9 @@ class _HomePageState extends State<HomePage> {
       db.loadData();
       if (db.todaysHabitList.isEmpty) {
         db.todaysHabitList = [
-          ['Breakfast', false],
-          ['Lunch', false],
-          ['Dinner', false],
+          ['Breakfast', false, 0],
+          ['Lunch', false, 0],
+          ['Dinner', false, 0],
         ];
       }
     }
@@ -68,7 +70,9 @@ class _HomePageState extends State<HomePage> {
       builder: (context) {
         return MyAlertBox(
           controller: _newHabitNameController,
-          hintText: 'Enter habit name..',
+          hintText: 'Enter food name..',
+          additionalController: _newHabitCaloriesController,
+          additionalHintText: 'Enter calories..',
           onSave: saveNewHabit,
           onCancel: cancelDialogBox,
         )
@@ -81,25 +85,35 @@ class _HomePageState extends State<HomePage> {
 
   void saveNewHabit() {
     setState(() {
-      db.todaysHabitList.add([_newHabitNameController.text, false]);
+      db.todaysHabitList.add([
+        _newHabitNameController.text,
+        false,
+        int.tryParse(_newHabitCaloriesController.text) ?? 0
+      ]);
     });
     _newHabitNameController.clear();
+    _newHabitCaloriesController.clear();
     Navigator.of(context).pop();
     db.updateDatabase();
   }
 
   void cancelDialogBox() {
     _newHabitNameController.clear();
+    _newHabitCaloriesController.clear();
     Navigator.of(context).pop();
   }
 
   void openHabitSettings(int index) {
+    _newHabitNameController.text = db.todaysHabitList[index][0];
+    _newHabitCaloriesController.text = db.todaysHabitList[index][2].toString();
     showDialog(
       context: context,
       builder: (context) {
         return MyAlertBox(
           controller: _newHabitNameController,
-          hintText: db.todaysHabitList[index][0],
+          hintText: 'Enter food name..',
+          additionalController: _newHabitCaloriesController,
+          additionalHintText: 'Enter calories..',
           onSave: () => saveExistingHabit(index),
           onCancel: cancelDialogBox,
         )
@@ -113,8 +127,11 @@ class _HomePageState extends State<HomePage> {
   void saveExistingHabit(int index) {
     setState(() {
       db.todaysHabitList[index][0] = _newHabitNameController.text;
+      db.todaysHabitList[index][2] =
+          int.tryParse(_newHabitCaloriesController.text) ?? 0;
     });
     _newHabitNameController.clear();
+    _newHabitCaloriesController.clear();
     Navigator.pop(context);
     db.updateDatabase();
   }
@@ -177,6 +194,8 @@ class _HomePageState extends State<HomePage> {
                       itemCount: db.todaysHabitList.length,
                       itemBuilder: (context, index) {
                         String label = mealLabels[index];
+                        String habitName = db.todaysHabitList[index][0];
+                        dynamic calories = db.todaysHabitList[index][2];
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -198,7 +217,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                               margin: const EdgeInsets.symmetric(vertical: 8),
                               child: HabitTile(
-                                habitName: db.todaysHabitList[index][0],
+                                habitName: '$habitName ($calories cal)',
                                 habitCompleted: db.todaysHabitList[index][1],
                                 onChanged: (value) =>
                                     checkBoxTapped(value, index),
@@ -242,6 +261,55 @@ class _HomePageState extends State<HomePage> {
         selectedItemColor: Colors.blueAccent,
         onTap: _onItemTapped,
       ),
+    );
+  }
+}
+
+class MyAlertBox extends StatelessWidget {
+  final TextEditingController controller;
+  final TextEditingController additionalController;
+  final String hintText;
+  final String additionalHintText;
+  final VoidCallback onSave;
+  final VoidCallback onCancel;
+
+  const MyAlertBox({
+    required this.controller,
+    required this.additionalController,
+    required this.hintText,
+    required this.additionalHintText,
+    required this.onSave,
+    required this.onCancel,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Add New Habit'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: controller,
+            decoration: InputDecoration(hintText: hintText),
+          ),
+          TextField(
+            controller: additionalController,
+            decoration: InputDecoration(hintText: additionalHintText),
+            keyboardType: TextInputType.number,
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: onCancel,
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: onSave,
+          child: const Text('Save'),
+        ),
+      ],
     );
   }
 }

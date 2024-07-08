@@ -36,9 +36,9 @@ class HabitDatabase {
           'Nationality: ${userData.nationality} Generate a diet plan consisting of breakfast, '
           'lunch and dinner for 7 days. '
           'Generate a response in this format: '
-          '[ [ { "day": 1, "type": "breakfast", "food": "some typical ${userData.nationality} breakfast" }, '
-          '{ "day": 1, "type": "lunch", "food": "some typical ${userData.nationality} lunch" }, '
-          '{ "day": 1, "type": "dinner", "food": "some typical ${userData.nationality} dinner" } ], '
+          '[ [ { "day": 1, "type": "breakfast", "food": "some typical ${userData.nationality} breakfast", "calories": total calories }, '
+          '{ "day": 1, "type": "lunch", "food": "some typical ${userData.nationality} lunch", "calories": total calories }, '
+          '{ "day": 1, "type": "dinner", "food": "some typical ${userData.nationality} dinner", "calories": total calories } ], '
           '// day 2 array consisting of breakfast, lunch and dinner [ .... ]. '
           'Dont give me any additional information, just the json response '
           'with a ```json in the start and ``` in the end';
@@ -61,6 +61,8 @@ class HabitDatabase {
 
           allHabitsList = jsonDecode(jsonString);
 
+          print(allHabitsList);
+
           for (var day in allHabitsList) {
             for (var meal in day) {
               meal["done"] = false;
@@ -68,9 +70,21 @@ class HabitDatabase {
           }
 
           todaysHabitList = [
-            [allHabitsList[0][0]['food'], false],
-            [allHabitsList[0][1]['food'], false],
-            [allHabitsList[0][2]['food'], false],
+            [
+              allHabitsList[0][0]['food'],
+              false,
+              allHabitsList[0][0]['calories']
+            ],
+            [
+              allHabitsList[0][1]['food'],
+              false,
+              allHabitsList[0][1]['calories']
+            ],
+            [
+              allHabitsList[0][2]['food'],
+              false,
+              allHabitsList[0][2]['calories']
+            ],
           ];
 
           // You can parse the jsonString using jsonDecode as explained before.
@@ -128,9 +142,9 @@ class HabitDatabase {
     }
 
     todaysHabitList = [
-      [allHabitsList[day][0]['food'], false],
-      [allHabitsList[day][1]['food'], false],
-      [allHabitsList[day][2]['food'], false],
+      [allHabitsList[day][0]['food'], false, allHabitsList[day][0]['calories']],
+      [allHabitsList[day][1]['food'], false, allHabitsList[day][1]['calories']],
+      [allHabitsList[day][2]['food'], false, allHabitsList[day][2]['calories']],
     ];
   }
 

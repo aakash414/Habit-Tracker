@@ -25,7 +25,12 @@ class _SignUpPageState extends State<SignUpPage> {
 
       // Navigate to the login page upon successful sign up
       if (userCredential.user != null && mounted) {
-        Navigator.of(context).pushReplacementNamed('/login');
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const LoginPage(),
+          ),
+        );
       }
     } catch (e) {
       if (mounted) {
