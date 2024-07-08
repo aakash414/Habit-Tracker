@@ -41,6 +41,9 @@ dependencies:
   flutter_heatmap_calendar: ^1.0.5
   material: ^1.0.0+2
   google_generative_ai: ^0.4.3
+  flutter_animate: ^3.0.0 # Add this for animations
+  firebase_core: ^2.32.0
+  firebase_auth: ^4.20.0
 
 
 dev_dependencies:
